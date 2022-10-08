@@ -1,9 +1,31 @@
 version: '3'
 services:
   node-server:
-    build: 
+    build:
       context: ./
       dockerfile: dev.Dockerfile
     ports:
-      - "5000:5000/tcp"
-    
+      - "$NODE_PORT:$NODE_PORT/tcp"
+    environment:
+      PG_USER: $PG_USER
+      PG_DATABASE: $PG_DATABASE
+      PG_PASSWORD: $PG_PASSWORD
+      PG_PORT: $PG_PORT
+      PG_HOST: $PG_HOST
+    depends_on:
+      - db-postgres
+  db-postgres:
+    image: postgres:15rc2-alpine
+    restart: always
+    ports:
+      - "$PG_PORT:$PG_PORT/tcp"
+    environment:
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASSWORD: $PG_PASSWORD
+      POSTGRES_DB: $PG_DATABASE
+    volumes:
+      - ./fish.sql:/docker-entrypoint-initdb.d/fish.sql # CREATE shark TABLE and INSERT some data into it
+      - db-postgres-volume:/var/lib/postgresql/data
+
+volumes:
+  db-postgres-volume:
