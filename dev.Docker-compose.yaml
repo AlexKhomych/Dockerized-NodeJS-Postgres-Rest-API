@@ -4,6 +4,7 @@ services:
     build:
       context: ./
       dockerfile: dev.Dockerfile
+    container_name: node-server
     ports:
       - "$NODE_PORT:$NODE_PORT/tcp"
     environment:
@@ -16,6 +17,7 @@ services:
       - db-postgres
   db-postgres:
     image: postgres:15rc2-alpine
+    container_name: db-postgres
     restart: always
     ports:
       - "$PG_PORT:$PG_PORT/tcp"
