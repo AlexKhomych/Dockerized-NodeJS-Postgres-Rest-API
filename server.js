@@ -4,29 +4,33 @@ require('dotenv').config();
 
 const app = express();
 
-app.get('/', (req, res) => {
-    insertData("sammy", "green").
-        then(res.send(`Adding an entry to fish database\n`));
+app.get('/', (request, response) => {
+    const query = {
+        text: "INSERT INTO shark (name, color) VALUES ($1, $2);",
+        values: ["sammy", "green"],
+    }
+    pool.query(query, (err, res) => {
+        if (err) {
+            console.error(err);
+            response.status(404).json({ result: false });
+        } else {
+            console.log(`Added a shark with the name sammy`);
+            response.status(200).json({ result: true });
+        }
+    });
 })
 
-async function insertData(name, color) {
-    try {
-        const res = await pool.query(
-            "INSERT INTO shark (name, color) VALUES ($1, $2)",
-            [name, color]
-        );
-        console.log(`Added a shark with the name ${name}`);
-    } catch (error) {
-        console.error(error);
-    }
-    // const name = "sammy";
-    // const color = "green";
-    // const res = await pool.query(
-    //     "TABLE shark"
-    // );
-    // console.log(res.rows);
-    //console.log(`Added a shark with the name ${name}`);
-}
+app.get('/sharks', (request, response) => {
+    pool.query("TABLE shark;", (err, res) => {
+        if (err) {
+            console.error(err);
+            response.status(404).json({ result: null })
+        } else {
+            console.log(`Retrived data from shark`);
+            response.status(200).json({ result: res.rows })
+        }
+    });
+})
 
 
-app.listen(5000, () => console.log(`Server up on port ${process.env.NODE_PORT}`));
+app.listen(process.env.NODE_PORT, () => console.log(`Server up on port ${process.env.NODE_PORT}`));
