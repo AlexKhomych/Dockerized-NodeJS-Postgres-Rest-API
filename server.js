@@ -1,12 +1,12 @@
-const e = require('express');
 const express = require('express');
 const { pool } = require('./db');
 require('dotenv').config();
 
 const app = express();
+app.use(express.json())
 
 app.get('/', (request, response) => {
-    insertData(response);
+    response.send("Welcome to this simple REST API :3");
 })
 
 app.get('/sharks', (request, response) => {
@@ -15,6 +15,16 @@ app.get('/sharks', (request, response) => {
         requestDataById(response, "shark", id);
     } else {
         requestData(response, "shark");
+    }
+})
+
+app.post('/sharks', (request, response) => {
+    let name = request.body.name;
+    let color = request.body.color;
+    if(name && color){
+        insertData(response, name, color);
+    }else{
+        response.status(404).json({result: null});
     }
 })
 
@@ -49,17 +59,17 @@ async function requestDataById(response, table, id) {
     });
 }
 
-async function insertData(response) {
+async function insertData(response, name, color) {
     const query = {
         text: "INSERT INTO shark (name, color) VALUES ($1, $2)",
-        values: ["sammy", "green"],
+        values: [name, color],
     }
     pool.query(query, (err, res) => {
         if (err) {
             console.error(err);
-            response.status(404).json({ result: false });
+            response.status(404).json({ result: null });
         } else {
-            console.log(`Added a shark with the name sammy`);
+            console.log(`Added a shark with the name ${name}`);
             response.status(200).json({ result: true });
         }
     });
