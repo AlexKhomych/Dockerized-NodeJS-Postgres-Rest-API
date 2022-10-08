@@ -1,0 +1,23 @@
+{
+  "name": "docker-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexKhomych/Docker-tutorial.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexKhomych/Docker-tutorial/issues"
+  },
+  "homepage": "https://github.com/AlexKhomych/Docker-tutorial#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
