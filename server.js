@@ -12,64 +12,64 @@ app.get('/', (request, response) => {
 app.get('/sharks', (request, response) => {
     let id = request.query.id;
     if (id) {
-        requestDataById(response, "shark", id);
+        getSharkById(response, id);
     } else {
-        requestData(response, "shark");
+        getSharks(response);
     }
 })
 
 app.post('/sharks', (request, response) => {
     let name = request.body.name;
     let color = request.body.color;
-    if(name && color){
-        insertData(response, name, color);
-    }else{
-        response.status(404).json({result: null});
+    if (name && color) {
+        postShark(response, name, color);
+    } else {
+        response.status(404).json({ result: null });
     }
 })
 
-async function requestData(response, table) {
+async function getSharks(response) {
     const query = {
-        text: `SELECT * FROM ${table}`,
+        text: 'SELECT * FROM sharks',
     };
-    pool.query(query, (err, res) => {
-        if (err) {
-            console.error(err);
-            response.status(404).json({ result: null })
-        } else {
-            console.log(`Retrived data from shark`);
-            response.status(200).json({ result: res.rows })
-        }
-    });
+    requestDataJSON(response, query);
 }
 
-async function requestDataById(response, table, id) {
+async function getSharkById(response, id) {
     const query = {
-        text: `SELECT * FROM ${table} WHERE id = $1;`,
+        text: 'SELECT * FROM sharks WHERE id = $1',
         values: [id],
     };
+    requestDataJSON(response, query);
+}
+
+async function postShark(response, name, color) {
+    const query = {
+        text: 'INSERT INTO sharks (name, color) VALUES ($1, $2)',
+        values: [name, color],
+    }
+    postDataJSON(response, query);
+}
+
+async function requestDataJSON(response, query) {
     pool.query(query, (err, res) => {
         if (err) {
             console.error(err);
             response.status(404).json({ result: null })
         } else {
-            console.log(`Retrived data from shark by id`);
+            console.log(`Retrived data`);
             response.status(200).json({ result: res.rows })
         }
     });
 }
 
-async function insertData(response, name, color) {
-    const query = {
-        text: "INSERT INTO shark (name, color) VALUES ($1, $2)",
-        values: [name, color],
-    }
+async function postDataJSON(response, query) {
     pool.query(query, (err, res) => {
         if (err) {
             console.error(err);
             response.status(404).json({ result: null });
         } else {
-            console.log(`Added a shark with the name ${name}`);
+            console.log(`Posted data`);
             response.status(200).json({ result: true });
         }
     });
