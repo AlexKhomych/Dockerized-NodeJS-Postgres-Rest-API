@@ -8,7 +8,7 @@ app.use(express.json())
 app.get('/', (request, response) => {
     response.send("Welcome to this simple REST API :3");
 })
-
+// https://github.com/AlexKhomych/Dockerized-NodeJS-Postgres-Rest-API
 app.get('/sharks', (request, response) => {
     let id = request.query.id;
     if (id) {
